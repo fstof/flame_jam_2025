@@ -1,0 +1,6 @@
+include: package:flame_lint/analysis_options.yaml
+
+linter:
+  rules:
+    sort_pub_dependencies: false
+    always_put_control_body_on_new_line: false

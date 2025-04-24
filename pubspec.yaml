@@ -1,0 +1,39 @@
+name: flame_jam_2025
+description: A simple Flame game.
+version: 0.1.0
+
+publish_to: 'none'
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flame: 1.28.1
+  flame_audio: 2.11.4
+  bloc: 
+  flutter_bloc: 
+  flame_bloc: 1.12.11
+  flame_forge2d: 0.19.0
+  get_it: ^8.0.3
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  freezed_annotation: ^3.0.0
+
+dev_dependencies:
+  flame_lint: 1.3.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  build_runner: ^2.4.15
+  freezed: ^3.0.3
+  json_serializable: ^6.9.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+  shaders:
+    - shaders/starfield.frag

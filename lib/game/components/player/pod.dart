@@ -1,0 +1,211 @@
+import 'dart:math' as math;
+
+import 'package:flame/components.dart';
+import 'package:flame/particles.dart';
+import 'package:flame_forge2d/flame_forge2d.dart' hide Particle;
+import 'package:flame_jam_2025/game/components/environment/earth.dart';
+import 'package:flame_jam_2025/game/components/environment/launchpad.dart';
+import 'package:flame_jam_2025/game/components/environment/planet.dart';
+import 'package:flame_jam_2025/game/components/player/booster.dart';
+import 'package:flame_jam_2025/game/components/player/player.dart';
+import 'package:flame_jam_2025/game/world.dart';
+import 'package:flame_jam_2025/util/util.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
+  // static final Vector2 size = Vector2(3, 3);
+  static final Vector2 size = Vector2(2, 2);
+  final Vector2 _position;
+  int turning = 0;
+  // int turningStrength = 20;
+  int turningStrength = 10;
+  bool isBoosting = false;
+  double boostStrength = 50;
+  bool attached = true;
+  double detachedTime = 0;
+  final Player _player;
+
+  final Tween<double> noise = Tween(begin: -0.5, end: 0.5);
+  final colorTween = ColorTween(begin: Colors.red, end: Colors.yellow);
+
+  Pod(this._position, this._player);
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    renderBody = false;
+    priority = 999;
+
+    final sprite = await game.loadSprite('Pod.png');
+    add(
+      SpriteComponent(
+        sprite: sprite,
+        size: Vector2(size.x, size.y),
+        anchor: Anchor.center,
+      ),
+    );
+  }
+
+  @override
+  Body createBody() {
+    final shape = CircleShape(radius: size.x * 0.5);
+
+    final fixtureDef = FixtureDef(shape, friction: 0.5);
+
+    final bodyDef = BodyDef(
+      type: BodyType.dynamic,
+      userData: this,
+      position: _position,
+      angularDamping: 1,
+    );
+    final body = world.createBody(bodyDef);
+    body.createFixture(fixtureDef);
+
+    return body;
+  }
+
+  @override
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (attached) return true;
+
+    if (event is KeyDownEvent) {
+      if (keysPressed.contains(LogicalKeyboardKey.space)) {
+        isBoosting = true;
+      }
+      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+        turning = -1;
+      }
+      if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+        turning = 1;
+      }
+    }
+    if (event is KeyUpEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.space) {
+        isBoosting = false;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+        turning = 0;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        turning = 0;
+      }
+    }
+    return true;
+  }
+
+  @override
+  void update(double dt) {
+    _applyGravity();
+    _checkBoundry();
+    _player.updateSpeed(speed);
+
+    if (attached) {
+      return;
+    } else {
+      detachedTime += dt;
+    }
+
+    if (isBoosting && _player.fuelRemaining > 0) {
+      _player.boost(dt);
+      final x = math.cos(angle - (math.pi / 2)) * boostStrength;
+      final y = math.sin(angle - (math.pi / 2)) * boostStrength;
+
+      final force = Vector2(x, y);
+
+      body.applyForce(force);
+      add(
+        ParticleSystemComponent(
+          position: Vector2(0, size.y * 0.5),
+          particle: Particle.generate(
+            count: 5,
+            generator: (i) {
+              return AcceleratedParticle(
+                lifespan: 0.25,
+                speed: Vector2(
+                      noise.transform(rng.nextDouble()),
+                      1,
+                    ) *
+                    i.toDouble(),
+                child: CircleParticle(
+                  radius: 0.7,
+                  paint: Paint()
+                    ..color = colorTween.transform(rng.nextDouble())!,
+                ),
+              );
+            },
+          ),
+        )..priority = -1,
+      );
+    }
+    if (turning != 0 && _player.fuelRemaining > 0) {
+      // _player.boost(dt);
+      body.applyTorque(size.y * turningStrength * turning);
+    }
+    super.update(dt);
+  }
+
+  double get speed {
+    final v = body.linearVelocity;
+    return math.sqrt((v.x * v.x) + (v.y * v.y));
+  }
+
+  @override
+  void beginContact(Object other, Contact contact) {
+    final target = (world as SpaceWorld).target;
+
+    if (other == target) {
+      if (speed > 5) {
+        _player.win();
+        // _player.crash();
+      } else {
+        _player.win();
+      }
+    } else if (other is Earth || other is Launchpad) {
+      _player.crash();
+    } else if (other is Booster && detachedTime > 0.5) {
+      _player.crash();
+    }
+  }
+
+  void _applyGravity() {
+    final planets = world.children.query<Planet>();
+    for (final p in planets) {
+      final distanceToMoon = body.position.distanceTo(p.position) - p.radius;
+      if (distanceToMoon < p.gravityDistance) {
+        final myPos = body.position;
+        final pPos = p.body.position;
+        final differenceVector = pPos - myPos;
+        var angleRadians = math.atan2(differenceVector.y, differenceVector.x);
+        angleRadians = (angleRadians + (2 * math.pi)) % (2 * math.pi);
+        final force = Vector2(
+          math.cos(angleRadians) * p.gravity,
+          math.sin(angleRadians) * p.gravity,
+        );
+        body.applyForce(force);
+      }
+    }
+    final earth = (world as SpaceWorld).earth;
+    if (earth != null) {
+      final distanceToEarth =
+          (earth.position.y - Earth.height * 0.5) - body.position.y;
+
+      if (distanceToEarth < Earth.gravityDistance) {
+        body.applyForce(Earth.earthGravity);
+      }
+    }
+  }
+
+  void _checkBoundry() {
+    if (position.x < game.camera.visibleWorldRect.left - 5 ||
+        position.x > game.camera.visibleWorldRect.right + 5 ||
+        position.y < game.camera.visibleWorldRect.top - 5 ||
+        position.y > game.camera.visibleWorldRect.bottom + 5) {
+      _player.crash();
+    }
+  }
+
+  void detach() {
+    attached = false;
+  }
+}
