@@ -26,7 +26,7 @@ class GravityGame extends Forge2DGame<SpaceWorld>
 
     camera.follow(world.cameraTarget);
 
-    world.add(StarfieldBackgroundComponent());
+    camera.backdrop = StarfieldBackgroundComponent();
   }
 
   void reset() {

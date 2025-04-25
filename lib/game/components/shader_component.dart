@@ -1,8 +1,10 @@
 import 'dart:ui';
 
-import 'package:flame/components.dart'; // Imports PositionComponent, Component, etc.
+import 'package:flame/components.dart';
+import 'package:flame_jam_2025/game/gravity_game.dart'; // Imports PositionComponent, Component, etc.
 
-class ShaderComponent extends PositionComponent with HasGameReference {
+class ShaderComponent extends PositionComponent
+    with HasGameReference<GravityGame> {
   ShaderComponent({
     required this.shaderAsset,
     super.priority,
@@ -16,16 +18,11 @@ class ShaderComponent extends PositionComponent with HasGameReference {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    anchor = Anchor.center;
+
     final fragmentProgram = await FragmentProgram.fromAsset(shaderAsset);
     shader = fragmentProgram.fragmentShader();
-    size = game.camera.viewport.size;
   }
-
-  // @override
-  // void onGameResize(Vector2 size) {
-  //   this.size = size;
-  //   super.onGameResize(size);
-  // }
 
   @override
   void update(double dt) {

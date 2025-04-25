@@ -55,7 +55,7 @@ class _GravityWidgetState extends State<GravityWidget> {
         child: GameWidget<GravityGame>(
           game: game,
           backgroundBuilder: (context) => Container(
-            color: Colors.orange,
+            color: Colors.black,
           ),
           loadingBuilder: (context) => Center(
             child: Text(
