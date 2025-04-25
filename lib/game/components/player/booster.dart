@@ -5,7 +5,7 @@ import 'package:flame/particles.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Particle;
 import 'package:flame_jam_2025/game/components/environment/earth.dart';
 import 'package:flame_jam_2025/game/components/player/player.dart';
-import 'package:flame_jam_2025/game/world.dart';
+import 'package:flame_jam_2025/game/space_world.dart';
 import 'package:flame_jam_2025/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -67,29 +67,35 @@ class Booster extends BodyComponent with KeyboardHandler {
     if (!active) return true;
 
     if (event is KeyDownEvent) {
-      if (keysPressed.contains(LogicalKeyboardKey.space)) {
+      if (keysPressed.contains(LogicalKeyboardKey.space) ||
+          keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
+          keysPressed.contains(LogicalKeyboardKey.keyW)) {
         isBoosting = true;
-        // add(boostComponent);
         _player.start();
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
+          keysPressed.contains(LogicalKeyboardKey.keyA)) {
         turning = -1;
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+      if (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
+          keysPressed.contains(LogicalKeyboardKey.keyD)) {
         turning = 1;
       }
     }
     if (event is KeyUpEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.space) {
+      if (event.logicalKey == LogicalKeyboardKey.space ||
+          event.logicalKey == LogicalKeyboardKey.arrowUp ||
+          event.logicalKey == LogicalKeyboardKey.keyW) {
         isBoosting = false;
-        // remove(boostComponent);
         detach();
         _player.pod.detach();
       }
-      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
+          event.logicalKey == LogicalKeyboardKey.keyA) {
         turning = 0;
       }
-      if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
+          event.logicalKey == LogicalKeyboardKey.keyD) {
         turning = 0;
       }
     }
@@ -124,7 +130,8 @@ class Booster extends BodyComponent with KeyboardHandler {
         ParticleSystemComponent(
           position: Vector2(0, size.y * 0.5),
           particle: Particle.generate(
-            count: 5,
+            lifespan: 0.1,
+            count: 20,
             generator: (i) {
               return AcceleratedParticle(
                 lifespan: 0.25,

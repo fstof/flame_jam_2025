@@ -8,7 +8,7 @@ import 'package:flame_jam_2025/game/components/environment/launchpad.dart';
 import 'package:flame_jam_2025/game/components/environment/planet.dart';
 import 'package:flame_jam_2025/game/components/player/booster.dart';
 import 'package:flame_jam_2025/game/components/player/player.dart';
-import 'package:flame_jam_2025/game/world.dart';
+import 'package:flame_jam_2025/game/space_world.dart';
 import 'package:flame_jam_2025/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -70,24 +70,32 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
     if (attached) return true;
 
     if (event is KeyDownEvent) {
-      if (keysPressed.contains(LogicalKeyboardKey.space)) {
+      if (keysPressed.contains(LogicalKeyboardKey.space) ||
+          keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
+          keysPressed.contains(LogicalKeyboardKey.keyW)) {
         isBoosting = true;
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
+          keysPressed.contains(LogicalKeyboardKey.keyA)) {
         turning = -1;
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+      if (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
+          keysPressed.contains(LogicalKeyboardKey.keyD)) {
         turning = 1;
       }
     }
     if (event is KeyUpEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.space) {
+      if (event.logicalKey == LogicalKeyboardKey.space ||
+          event.logicalKey == LogicalKeyboardKey.arrowUp ||
+          event.logicalKey == LogicalKeyboardKey.keyW) {
         isBoosting = false;
       }
-      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
+          event.logicalKey == LogicalKeyboardKey.keyA) {
         turning = 0;
       }
-      if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
+          event.logicalKey == LogicalKeyboardKey.keyD) {
         turning = 0;
       }
     }
@@ -116,9 +124,11 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
       body.applyForce(force);
       add(
         ParticleSystemComponent(
+          priority: -1,
           position: Vector2(0, size.y * 0.5),
           particle: Particle.generate(
-            count: 5,
+            lifespan: 0.1,
+            count: 15,
             generator: (i) {
               return AcceleratedParticle(
                 lifespan: 0.25,
@@ -135,7 +145,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
               );
             },
           ),
-        )..priority = -1,
+        ),
       );
     }
     if (turning != 0 && _player.fuelRemaining > 0) {

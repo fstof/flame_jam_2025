@@ -281,14 +281,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.4"
-  flame_bloc:
-    dependency: "direct main"
-    description:
-      name: flame_bloc
-      sha256: d238d64bd9776d52e29ca9be26ed1b6d8c043da32958e0dc74729c2bb8815afd
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.12.11"
   flame_forge2d:
     dependency: "direct main"
     description:

@@ -1,9 +1,10 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame_jam_2025/game/game.dart';
+import 'package:flame_jam_2025/game/gravity_game.dart';
 import 'package:flutter/animation.dart';
 
-class CameraTarget extends PositionComponent with HasGameReference<MyGame> {
+class CameraTarget extends PositionComponent
+    with HasGameReference<GravityGame> {
   final effectController = CurvedEffectController(
     0.1,
     Curves.easeOut,

@@ -5,9 +5,10 @@ import 'package:flame/extensions.dart'; // For toSize()
 import 'package:flame_jam_2025/game/components/shader_component.dart';
 
 class StarfieldBackgroundComponent extends ShaderComponent {
-  StarfieldBackgroundComponent({super.priority})
+  StarfieldBackgroundComponent({super.priority, Vector2? size})
       : super(shaderAsset: 'shaders/starfield.frag') {
     anchor = Anchor.center;
+    this.size = size ?? Vector2(1280, 720);
   }
 
   @override

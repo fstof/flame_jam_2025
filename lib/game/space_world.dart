@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame_jam_2025/game/components/camera_target.dart';
 import 'package:flame_jam_2025/game/components/environment/earth.dart';
@@ -11,13 +10,13 @@ import 'package:flame_jam_2025/game/components/environment/moon.dart';
 import 'package:flame_jam_2025/game/components/environment/planet.dart';
 import 'package:flame_jam_2025/game/components/environment/planet_sprites.dart';
 import 'package:flame_jam_2025/game/components/player/player.dart';
-import 'package:flame_jam_2025/game/game.dart';
+import 'package:flame_jam_2025/game/gravity_game.dart';
 import 'package:flame_jam_2025/state/game_cubit.dart';
 import 'package:flame_jam_2025/util/util.dart';
 import 'package:flutter/services.dart';
 
 class SpaceWorld extends Forge2DWorld
-    with TapCallbacks, KeyboardHandler, HasGameReference<MyGame> {
+    with TapCallbacks, KeyboardHandler, HasGameReference<GravityGame> {
   final GameCubit cubit;
   Earth? earth;
   late Planet target;
@@ -81,7 +80,10 @@ class SpaceWorld extends Forge2DWorld
   Future<void> onLoad() async {
     super.onLoad();
     gravity = Vector2(0, 0);
+    _addChildren();
+  }
 
+  Future<void> _addChildren() async {
     final top = game.camera.visibleWorldRect.top;
     final right = game.camera.visibleWorldRect.right;
     final bottom = game.camera.visibleWorldRect.bottom;
@@ -103,12 +105,7 @@ class SpaceWorld extends Forge2DWorld
 
     add(Launchpad(playerPosition));
 
-    add(
-      FlameBlocProvider<GameCubit, GameState>.value(
-        value: cubit,
-        children: [Player(playerPosition, this)],
-      ),
-    );
+    add(Player(playerPosition, this, cubit));
   }
 
   @override
@@ -119,8 +116,12 @@ class SpaceWorld extends Forge2DWorld
 
     if (event is KeyDownEvent) {
       if (keysPressed.contains(LogicalKeyboardKey.space) ||
+          keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
+          keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
           keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
-          keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+          keysPressed.contains(LogicalKeyboardKey.keyW) ||
+          keysPressed.contains(LogicalKeyboardKey.keyA) ||
+          keysPressed.contains(LogicalKeyboardKey.keyD)) {
         cubit.start((gameState! as LevelClearGameState).level + 1);
       }
     }
