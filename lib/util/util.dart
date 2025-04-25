@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 final rng = Random();
-final kCameraSize = Vector2(1280, 720);
+final kCameraSize = Vector2(1024, 768);
 
 double randomBetween(double min, double max) {
   return min + rng.nextDouble() * (max - min);

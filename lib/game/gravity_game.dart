@@ -13,7 +13,7 @@ class GravityGame extends Forge2DGame<SpaceWorld>
   GravityGame(this.cubit)
       : super(
           camera: CameraComponent.withFixedResolution(
-            width: kCameraSize.x * 0.25,
+            width: kCameraSize.x,
             height: kCameraSize.y,
           ),
           world: SpaceWorld(cubit),

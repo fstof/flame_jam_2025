@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart'; // For toSize()
 import 'package:flame_jam_2025/game/components/shader_component.dart';
+import 'package:flame_jam_2025/util/util.dart';
 
 class StarfieldBackgroundComponent extends ShaderComponent {
   StarfieldBackgroundComponent({super.priority, Vector2? size})
@@ -16,8 +17,8 @@ class StarfieldBackgroundComponent extends ShaderComponent {
   Future<void> onLoad() async {
     super.onLoad();
     anchor = Anchor.center;
-    size = _size ?? game.camera.viewport.size;
-    position = game.camera.visibleWorldRect.center.toVector2() + (size / 2);
+    size = _size ?? kCameraSize;
+    position = size / 2;
   }
 
   @override
@@ -28,11 +29,11 @@ class StarfieldBackgroundComponent extends ShaderComponent {
       // uTime: Time for animation
       setter.setFloat(time);
       // uStarDensity: Density of stars (0.0 to 1.0, higher means more stars)
-      setter.setFloat(1);
+      setter.setFloat(0.05);
       // uStarSize: Base size of stars in pixels (e.g., 1.5)
-      setter.setFloat(1.5);
+      setter.setFloat(2);
       // uGridScale: Controls the spacing grid size (e.g., 50.0) - larger means denser potential star locations
-      setter.setFloat(10);
+      setter.setFloat(50);
       // uTwinkleIntensity: Controls the magnitude of brightness fluctuation (0.0 = none, 1.0 = standard)
       setter.setFloat(5);
     });
