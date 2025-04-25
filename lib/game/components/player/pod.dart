@@ -165,9 +165,9 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
     final target = (world as SpaceWorld).target;
 
     if (other == target) {
-      if (speed > 5) {
-        _player.win();
-        // _player.crash();
+      if (speed > kLethalSpeed) {
+        // _player.win();
+        _player.crash();
       } else {
         _player.win();
       }

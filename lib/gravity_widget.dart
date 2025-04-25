@@ -38,9 +38,6 @@ class _GravityWidgetState extends State<GravityWidget> {
         bloc: cubit,
         listener: (context, state) {
           switch (state) {
-            case InitialGameState _:
-              game.overlays.clear();
-              game.overlays.add('menu');
             case PlayGameState _:
               game.overlays.clear();
               game.overlays.add('hud');

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 final rng = Random();
 final kCameraSize = Vector2(1024, 768);
+const kLethalSpeed = 5;
 
 double randomBetween(double min, double max) {
   return min + rng.nextDouble() * (max - min);
