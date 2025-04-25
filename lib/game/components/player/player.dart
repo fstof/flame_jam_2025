@@ -46,10 +46,10 @@ class Player extends Component with KeyboardHandler {
     cubit.updateSpeed(speed);
   }
 
-  void boost(double dt) {
+  void boost(double dt, {bool turning = false}) {
     boostTime += dt;
     if (boostTime > 0.1) {
-      cubit.boost();
+      cubit.boost(turning: turning);
       boostTime = 0;
     }
   }

@@ -7,7 +7,7 @@ part 'game_cubit.freezed.dart';
 part 'game_state.dart';
 
 class GameCubit extends Cubit<GameState> {
-  GameCubit() : super(const GameState.initial());
+  GameCubit() : super(const GameState.initial(hardMode: false));
   Stopwatch stopwatch = Stopwatch();
   Timer? timer;
 
@@ -18,6 +18,7 @@ class GameCubit extends Cubit<GameState> {
     emit(
       GameState.gameOver(
         level: currentState.level,
+        hardMode: state.hardMode,
         fuel: currentState.fuel,
         crashSpeed: currentState.speed,
         time: currentState.time,
@@ -32,6 +33,7 @@ class GameCubit extends Cubit<GameState> {
     emit(
       GameState.levelClear(
         level: currentState.level,
+        hardMode: state.hardMode,
         fuel: currentState.fuel,
         time: currentState.time,
       ),
@@ -46,17 +48,26 @@ class GameCubit extends Cubit<GameState> {
     // );
   }
 
+  void toggleHardMode() {
+    emit(GameState.initial(hardMode: !state.hardMode));
+  }
+
   void reset() {
     stopwatch.reset();
-    emit(const GameState.initial());
+    emit(GameState.initial(hardMode: state.hardMode));
   }
 
   void start([int level = 1]) {
+    var fuel = 1.0;
+    if (state is LevelClearGameState) {
+      fuel = (state as LevelClearGameState).fuel;
+    }
     stopwatch.start();
     emit(
       GameState.play(
         level: level,
-        fuel: 1,
+        hardMode: state.hardMode,
+        fuel: fuel,
         time: stopwatch.elapsed,
         speed: 0,
       ),
@@ -82,13 +93,19 @@ class GameCubit extends Cubit<GameState> {
     );
   }
 
-  void boost() {
+  void boost({bool turning = false}) {
     final currentState = state;
     if (currentState is! PlayGameState) return;
     if (currentState.fuel <= 0) {
       emit(currentState.copyWith(fuel: 0));
     } else {
-      emit(currentState.copyWith(fuel: currentState.fuel - 0.01));
+      if (turning) {
+        if (currentState.hardMode) {
+          emit(currentState.copyWith(fuel: currentState.fuel - 0.003));
+        }
+      } else {
+        emit(currentState.copyWith(fuel: currentState.fuel - 0.003));
+      }
     }
   }
 }

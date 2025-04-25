@@ -149,7 +149,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
       );
     }
     if (turning != 0 && _player.fuelRemaining > 0) {
-      // _player.boost(dt);
+      _player.boost(dt, turning: true);
       body.applyTorque(size.y * turningStrength * turning);
     }
     super.update(dt);

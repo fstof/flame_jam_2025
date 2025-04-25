@@ -15,43 +15,130 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$GameState {
+  bool get hardMode;
+
+  /// Create a copy of GameState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $GameStateCopyWith<GameState> get copyWith =>
+      _$GameStateCopyWithImpl<GameState>(this as GameState, _$identity);
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is GameState);
+        (other.runtimeType == runtimeType &&
+            other is GameState &&
+            (identical(other.hardMode, hardMode) ||
+                other.hardMode == hardMode));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, hardMode);
 
   @override
   String toString() {
-    return 'GameState()';
+    return 'GameState(hardMode: $hardMode)';
   }
 }
 
 /// @nodoc
-class $GameStateCopyWith<$Res> {
-  $GameStateCopyWith(GameState _, $Res Function(GameState) __);
+abstract mixin class $GameStateCopyWith<$Res> {
+  factory $GameStateCopyWith(GameState value, $Res Function(GameState) _then) =
+      _$GameStateCopyWithImpl;
+  @useResult
+  $Res call({bool hardMode});
+}
+
+/// @nodoc
+class _$GameStateCopyWithImpl<$Res> implements $GameStateCopyWith<$Res> {
+  _$GameStateCopyWithImpl(this._self, this._then);
+
+  final GameState _self;
+  final $Res Function(GameState) _then;
+
+  /// Create a copy of GameState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? hardMode = null,
+  }) {
+    return _then(_self.copyWith(
+      hardMode: null == hardMode
+          ? _self.hardMode
+          : hardMode // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 }
 
 /// @nodoc
 
 class InitialGameState implements GameState {
-  const InitialGameState();
+  const InitialGameState({required this.hardMode});
+
+  @override
+  final bool hardMode;
+
+  /// Create a copy of GameState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $InitialGameStateCopyWith<InitialGameState> get copyWith =>
+      _$InitialGameStateCopyWithImpl<InitialGameState>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is InitialGameState);
+        (other.runtimeType == runtimeType &&
+            other is InitialGameState &&
+            (identical(other.hardMode, hardMode) ||
+                other.hardMode == hardMode));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, hardMode);
 
   @override
   String toString() {
-    return 'GameState.initial()';
+    return 'GameState.initial(hardMode: $hardMode)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $InitialGameStateCopyWith<$Res>
+    implements $GameStateCopyWith<$Res> {
+  factory $InitialGameStateCopyWith(
+          InitialGameState value, $Res Function(InitialGameState) _then) =
+      _$InitialGameStateCopyWithImpl;
+  @override
+  @useResult
+  $Res call({bool hardMode});
+}
+
+/// @nodoc
+class _$InitialGameStateCopyWithImpl<$Res>
+    implements $InitialGameStateCopyWith<$Res> {
+  _$InitialGameStateCopyWithImpl(this._self, this._then);
+
+  final InitialGameState _self;
+  final $Res Function(InitialGameState) _then;
+
+  /// Create a copy of GameState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? hardMode = null,
+  }) {
+    return _then(InitialGameState(
+      hardMode: null == hardMode
+          ? _self.hardMode
+          : hardMode // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
   }
 }
 
@@ -60,17 +147,21 @@ class InitialGameState implements GameState {
 class PlayGameState implements GameState {
   const PlayGameState(
       {required this.level,
+      required this.hardMode,
       required this.fuel,
       required this.speed,
       required this.time});
 
   final int level;
+  @override
+  final bool hardMode;
   final double fuel;
   final double speed;
   final Duration time;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
   $PlayGameStateCopyWith<PlayGameState> get copyWith =>
@@ -82,17 +173,20 @@ class PlayGameState implements GameState {
         (other.runtimeType == runtimeType &&
             other is PlayGameState &&
             (identical(other.level, level) || other.level == level) &&
+            (identical(other.hardMode, hardMode) ||
+                other.hardMode == hardMode) &&
             (identical(other.fuel, fuel) || other.fuel == fuel) &&
             (identical(other.speed, speed) || other.speed == speed) &&
             (identical(other.time, time) || other.time == time));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, level, fuel, speed, time);
+  int get hashCode =>
+      Object.hash(runtimeType, level, hardMode, fuel, speed, time);
 
   @override
   String toString() {
-    return 'GameState.play(level: $level, fuel: $fuel, speed: $speed, time: $time)';
+    return 'GameState.play(level: $level, hardMode: $hardMode, fuel: $fuel, speed: $speed, time: $time)';
   }
 }
 
@@ -102,8 +196,10 @@ abstract mixin class $PlayGameStateCopyWith<$Res>
   factory $PlayGameStateCopyWith(
           PlayGameState value, $Res Function(PlayGameState) _then) =
       _$PlayGameStateCopyWithImpl;
+  @override
   @useResult
-  $Res call({int level, double fuel, double speed, Duration time});
+  $Res call(
+      {int level, bool hardMode, double fuel, double speed, Duration time});
 }
 
 /// @nodoc
@@ -116,9 +212,11 @@ class _$PlayGameStateCopyWithImpl<$Res>
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @pragma('vm:prefer-inline')
   $Res call({
     Object? level = null,
+    Object? hardMode = null,
     Object? fuel = null,
     Object? speed = null,
     Object? time = null,
@@ -128,6 +226,10 @@ class _$PlayGameStateCopyWithImpl<$Res>
           ? _self.level
           : level // ignore: cast_nullable_to_non_nullable
               as int,
+      hardMode: null == hardMode
+          ? _self.hardMode
+          : hardMode // ignore: cast_nullable_to_non_nullable
+              as bool,
       fuel: null == fuel
           ? _self.fuel
           : fuel // ignore: cast_nullable_to_non_nullable
@@ -149,17 +251,21 @@ class _$PlayGameStateCopyWithImpl<$Res>
 class GameOverGameState implements GameState {
   const GameOverGameState(
       {required this.level,
+      required this.hardMode,
       required this.fuel,
       required this.crashSpeed,
       required this.time});
 
   final int level;
+  @override
+  final bool hardMode;
   final double fuel;
   final double crashSpeed;
   final Duration time;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
   $GameOverGameStateCopyWith<GameOverGameState> get copyWith =>
@@ -171,6 +277,8 @@ class GameOverGameState implements GameState {
         (other.runtimeType == runtimeType &&
             other is GameOverGameState &&
             (identical(other.level, level) || other.level == level) &&
+            (identical(other.hardMode, hardMode) ||
+                other.hardMode == hardMode) &&
             (identical(other.fuel, fuel) || other.fuel == fuel) &&
             (identical(other.crashSpeed, crashSpeed) ||
                 other.crashSpeed == crashSpeed) &&
@@ -178,11 +286,12 @@ class GameOverGameState implements GameState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, level, fuel, crashSpeed, time);
+  int get hashCode =>
+      Object.hash(runtimeType, level, hardMode, fuel, crashSpeed, time);
 
   @override
   String toString() {
-    return 'GameState.gameOver(level: $level, fuel: $fuel, crashSpeed: $crashSpeed, time: $time)';
+    return 'GameState.gameOver(level: $level, hardMode: $hardMode, fuel: $fuel, crashSpeed: $crashSpeed, time: $time)';
   }
 }
 
@@ -192,8 +301,14 @@ abstract mixin class $GameOverGameStateCopyWith<$Res>
   factory $GameOverGameStateCopyWith(
           GameOverGameState value, $Res Function(GameOverGameState) _then) =
       _$GameOverGameStateCopyWithImpl;
+  @override
   @useResult
-  $Res call({int level, double fuel, double crashSpeed, Duration time});
+  $Res call(
+      {int level,
+      bool hardMode,
+      double fuel,
+      double crashSpeed,
+      Duration time});
 }
 
 /// @nodoc
@@ -206,9 +321,11 @@ class _$GameOverGameStateCopyWithImpl<$Res>
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @pragma('vm:prefer-inline')
   $Res call({
     Object? level = null,
+    Object? hardMode = null,
     Object? fuel = null,
     Object? crashSpeed = null,
     Object? time = null,
@@ -218,6 +335,10 @@ class _$GameOverGameStateCopyWithImpl<$Res>
           ? _self.level
           : level // ignore: cast_nullable_to_non_nullable
               as int,
+      hardMode: null == hardMode
+          ? _self.hardMode
+          : hardMode // ignore: cast_nullable_to_non_nullable
+              as bool,
       fuel: null == fuel
           ? _self.fuel
           : fuel // ignore: cast_nullable_to_non_nullable
@@ -238,14 +359,20 @@ class _$GameOverGameStateCopyWithImpl<$Res>
 
 class LevelClearGameState implements GameState {
   const LevelClearGameState(
-      {required this.level, required this.fuel, required this.time});
+      {required this.level,
+      required this.hardMode,
+      required this.fuel,
+      required this.time});
 
   final int level;
+  @override
+  final bool hardMode;
   final double fuel;
   final Duration time;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
   $LevelClearGameStateCopyWith<LevelClearGameState> get copyWith =>
@@ -257,16 +384,18 @@ class LevelClearGameState implements GameState {
         (other.runtimeType == runtimeType &&
             other is LevelClearGameState &&
             (identical(other.level, level) || other.level == level) &&
+            (identical(other.hardMode, hardMode) ||
+                other.hardMode == hardMode) &&
             (identical(other.fuel, fuel) || other.fuel == fuel) &&
             (identical(other.time, time) || other.time == time));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, level, fuel, time);
+  int get hashCode => Object.hash(runtimeType, level, hardMode, fuel, time);
 
   @override
   String toString() {
-    return 'GameState.levelClear(level: $level, fuel: $fuel, time: $time)';
+    return 'GameState.levelClear(level: $level, hardMode: $hardMode, fuel: $fuel, time: $time)';
   }
 }
 
@@ -276,8 +405,9 @@ abstract mixin class $LevelClearGameStateCopyWith<$Res>
   factory $LevelClearGameStateCopyWith(
           LevelClearGameState value, $Res Function(LevelClearGameState) _then) =
       _$LevelClearGameStateCopyWithImpl;
+  @override
   @useResult
-  $Res call({int level, double fuel, Duration time});
+  $Res call({int level, bool hardMode, double fuel, Duration time});
 }
 
 /// @nodoc
@@ -290,9 +420,11 @@ class _$LevelClearGameStateCopyWithImpl<$Res>
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @pragma('vm:prefer-inline')
   $Res call({
     Object? level = null,
+    Object? hardMode = null,
     Object? fuel = null,
     Object? time = null,
   }) {
@@ -301,6 +433,10 @@ class _$LevelClearGameStateCopyWithImpl<$Res>
           ? _self.level
           : level // ignore: cast_nullable_to_non_nullable
               as int,
+      hardMode: null == hardMode
+          ? _self.hardMode
+          : hardMode // ignore: cast_nullable_to_non_nullable
+              as bool,
       fuel: null == fuel
           ? _self.fuel
           : fuel // ignore: cast_nullable_to_non_nullable
