@@ -76,9 +76,7 @@ class Booster extends BodyComponent with KeyboardHandler, ContactCallbacks {
     if (!active) return true;
 
     if (event is KeyDownEvent) {
-      if (keysPressed.contains(LogicalKeyboardKey.space) ||
-          keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
-          keysPressed.contains(LogicalKeyboardKey.keyW)) {
+      if (_player.keyboardMapping.isBoostKey(keysPressed)) {
         isBoosting = true;
         _player.start();
         if (boost?.source != null) {
@@ -90,30 +88,26 @@ class Booster extends BodyComponent with KeyboardHandler, ContactCallbacks {
               .then((ap) => boost = ap);
         }
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
-          keysPressed.contains(LogicalKeyboardKey.keyA)) {
+
+      if (_player.keyboardMapping.isLeftKey(keysPressed)) {
         turning = -1;
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
-          keysPressed.contains(LogicalKeyboardKey.keyD)) {
+      if (_player.keyboardMapping.isRightKey(keysPressed)) {
         turning = 1;
       }
     }
+
     if (event is KeyUpEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.space ||
-          event.logicalKey == LogicalKeyboardKey.arrowUp ||
-          event.logicalKey == LogicalKeyboardKey.keyW) {
+      if (_player.keyboardMapping.isBoostKey({event.logicalKey})) {
         isBoosting = false;
         boost?.stop();
         detach();
         _player.pod.detach();
       }
-      if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
-          event.logicalKey == LogicalKeyboardKey.keyA) {
+      if (_player.keyboardMapping.isLeftKey({event.logicalKey})) {
         turning = 0;
       }
-      if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
-          event.logicalKey == LogicalKeyboardKey.keyD) {
+      if (_player.keyboardMapping.isRightKey({event.logicalKey})) {
         turning = 0;
       }
     }

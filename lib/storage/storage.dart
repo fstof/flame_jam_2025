@@ -29,6 +29,14 @@ class Storage {
     return _scoreBox.get('score') ?? 0;
   }
 
+  void mpSaveScore(bool player1, int score) {
+    _scoreBox.put('score-$player1', score);
+  }
+
+  int mpGetScore(bool player1) {
+    return _scoreBox.get('score-$player1') ?? 0;
+  }
+
   bool get musicOn {
     return _settingsBox.get('musicOn') ?? true;
   }

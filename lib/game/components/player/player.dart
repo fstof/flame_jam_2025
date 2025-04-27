@@ -2,19 +2,34 @@ import 'package:flame/components.dart';
 import 'package:flame_jam_2025/audio/audio_controller.dart';
 import 'package:flame_jam_2025/audio/sounds.dart';
 import 'package:flame_jam_2025/game/components/player/booster.dart';
+import 'package:flame_jam_2025/game/components/player/keyboard_mapping.dart';
 import 'package:flame_jam_2025/game/components/player/pod.dart';
 import 'package:flame_jam_2025/game/space_world.dart';
+import 'package:flame_jam_2025/state/2_player_game/game2_cubit.dart';
 import 'package:flame_jam_2025/state/game_cubit.dart';
 
 class Player extends Component with KeyboardHandler {
-  Player(this._position, this.world, this.gameCubit);
+  Player({
+    required Vector2 position,
+    required this.world,
+    required this.gameCubit,
+    required this.game2Cubit,
+    this.player1 = true,
+    this.multiplayer = false,
+    this.keyboardMapping = defaultKBMapping,
+  }) : _position = position;
 
   final GameCubit gameCubit;
+  final Game2Cubit game2Cubit;
   final Vector2 _position;
   late Booster booster;
   late Pod pod;
   final SpaceWorld world;
+  final bool player1;
+  final bool multiplayer;
   double boostTime = 0;
+
+  final KeyboardMapping keyboardMapping;
 
   @override
   Future<void> onLoad() async {

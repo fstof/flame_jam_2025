@@ -7,6 +7,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flame_jam_2025/game/components/environment/starfield_background.dart';
 import 'package:flame_jam_2025/game/space_world.dart';
+import 'package:flame_jam_2025/state/2_player_game/game2_cubit.dart';
 import 'package:flame_jam_2025/state/audio_cubit.dart';
 import 'package:flame_jam_2025/state/game_cubit.dart';
 import 'package:flame_jam_2025/util/assets.dart';
@@ -16,16 +17,24 @@ class GravityGame extends Forge2DGame<SpaceWorld>
     with HasKeyboardHandlerComponents {
   GravityGame({
     required this.gameCubit,
+    required this.game2Cubit,
     required this.audioCubit,
+    this.players = 1,
   }) : super(
           camera: CameraComponent.withFixedResolution(
             width: kCameraSize.x,
             height: kCameraSize.y,
           ),
-          world: SpaceWorld(gameCubit),
+          world: SpaceWorld(
+            gameCubit: gameCubit,
+            game2Cubit: game2Cubit,
+            players: players,
+          ),
         );
 
+  final int players;
   final GameCubit gameCubit;
+  final Game2Cubit game2Cubit;
   final AudioCubit audioCubit;
   final audioPool = <String, AudioPool>{};
 

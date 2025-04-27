@@ -74,9 +74,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
     if (attached) return true;
 
     if (event is KeyDownEvent) {
-      if (keysPressed.contains(LogicalKeyboardKey.space) ||
-          keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
-          keysPressed.contains(LogicalKeyboardKey.keyW)) {
+      if (_player.keyboardMapping.isBoostKey(keysPressed)) {
         isBoosting = true;
         if (boost?.source != null) {
           boost!.setReleaseMode(ReleaseMode.release);
@@ -87,8 +85,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
               .then((ap) => boost = ap);
         }
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
-          keysPressed.contains(LogicalKeyboardKey.keyA)) {
+      if (_player.keyboardMapping.isLeftKey(keysPressed)) {
         turning = -1;
         if (nudge?.source != null) {
           nudge!.setReleaseMode(ReleaseMode.loop);
@@ -99,8 +96,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
               .then((ap) => nudge = ap);
         }
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
-          keysPressed.contains(LogicalKeyboardKey.keyD)) {
+      if (_player.keyboardMapping.isRightKey(keysPressed)) {
         turning = 1;
         if (nudge?.source != null) {
           nudge!.setReleaseMode(ReleaseMode.loop);
@@ -113,19 +109,15 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
       }
     }
     if (event is KeyUpEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.space ||
-          event.logicalKey == LogicalKeyboardKey.arrowUp ||
-          event.logicalKey == LogicalKeyboardKey.keyW) {
+      if (_player.keyboardMapping.isBoostKey({event.logicalKey})) {
         isBoosting = false;
         boost?.stop();
       }
-      if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
-          event.logicalKey == LogicalKeyboardKey.keyA) {
+      if (_player.keyboardMapping.isLeftKey({event.logicalKey})) {
         turning = 0;
         nudge?.stop();
       }
-      if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
-          event.logicalKey == LogicalKeyboardKey.keyD) {
+      if (_player.keyboardMapping.isRightKey({event.logicalKey})) {
         turning = 0;
         nudge?.stop();
       }

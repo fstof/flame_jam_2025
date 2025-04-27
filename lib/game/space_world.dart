@@ -9,8 +9,10 @@ import 'package:flame_jam_2025/game/components/environment/launchpad.dart';
 import 'package:flame_jam_2025/game/components/environment/moon.dart';
 import 'package:flame_jam_2025/game/components/environment/planet.dart';
 import 'package:flame_jam_2025/game/components/environment/planet_sprites.dart';
+import 'package:flame_jam_2025/game/components/player/keyboard_mapping.dart';
 import 'package:flame_jam_2025/game/components/player/player.dart';
 import 'package:flame_jam_2025/game/gravity_game.dart';
+import 'package:flame_jam_2025/state/2_player_game/game2_cubit.dart';
 import 'package:flame_jam_2025/state/game_cubit.dart';
 import 'package:flame_jam_2025/util/util.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +20,7 @@ import 'package:flutter/services.dart';
 class SpaceWorld extends Forge2DWorld
     with TapCallbacks, KeyboardHandler, HasGameReference<GravityGame> {
   final GameCubit gameCubit;
+  final Game2Cubit game2Cubit;
   Earth? earth;
   late Planet target;
   Planet? start;
@@ -25,8 +28,13 @@ class SpaceWorld extends Forge2DWorld
   bool movingCamera = false;
   late final CameraTarget cameraTarget;
   StreamSubscription? _ss;
+  int players;
 
-  SpaceWorld(this.gameCubit) {
+  SpaceWorld({
+    required this.gameCubit,
+    required this.game2Cubit,
+    required this.players,
+  }) {
     add(cameraTarget = CameraTarget());
 
     _ss = gameCubit.stream.listen((state) async {
@@ -84,6 +92,7 @@ class SpaceWorld extends Forge2DWorld
 
   Future<void> _addChildren() async {
     final top = game.camera.visibleWorldRect.top;
+    final center = game.camera.visibleWorldRect.center.dx;
     final right = game.camera.visibleWorldRect.right;
     final bottom = game.camera.visibleWorldRect.bottom;
     final left = game.camera.visibleWorldRect.left;
@@ -97,14 +106,53 @@ class SpaceWorld extends Forge2DWorld
       ),
     );
 
-    final playerPosition = Vector2(
-      randomBetween(left + 4, right - 4),
-      bottom - Earth.height * 1.8,
-    );
+    if (players == 2) {
+      final player1Position = Vector2(
+        randomBetween(left + 4, center - 4),
+        bottom - Earth.height * 1.8,
+      );
+      add(Launchpad(player1Position));
+      add(
+        Player(
+          position: player1Position,
+          world: this,
+          gameCubit: gameCubit,
+          game2Cubit: game2Cubit,
+          multiplayer: true,
+        ),
+      );
 
-    add(Launchpad(playerPosition));
-
-    add(Player(playerPosition, this, gameCubit));
+      final player2Position = Vector2(
+        randomBetween(center + 4, right - 4),
+        bottom - Earth.height * 1.8,
+      );
+      add(Launchpad(player2Position));
+      add(
+        Player(
+          position: player2Position,
+          world: this,
+          gameCubit: gameCubit,
+          game2Cubit: game2Cubit,
+          player1: false,
+          multiplayer: true,
+          keyboardMapping: wasdKBMapping,
+        ),
+      );
+    } else {
+      final player1Position = Vector2(
+        randomBetween(left + 4, right - 4),
+        bottom - Earth.height * 1.8,
+      );
+      add(Launchpad(player1Position));
+      add(
+        Player(
+          position: player1Position,
+          world: this,
+          gameCubit: gameCubit,
+          game2Cubit: game2Cubit,
+        ),
+      );
+    }
   }
 
   @override
