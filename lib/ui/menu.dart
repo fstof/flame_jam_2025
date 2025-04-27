@@ -45,7 +45,11 @@ class Menu extends StatelessWidget {
                   children: [
                     Text(
                       'Gravity Grappler',
-                      style: Theme.of(context).textTheme.headlineLarge,
+                      style:
+                          Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                fontSize: 50,
+                                color: Colors.yellow,
+                              ),
                     ),
                     spaceL,
                     const Text('Press Space To Start'),
@@ -59,7 +63,11 @@ class Menu extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text('Options'),
+                  Text('Options',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Colors.yellow)),
                   spaceM,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

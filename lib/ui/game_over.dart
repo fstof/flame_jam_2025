@@ -58,18 +58,18 @@ class GameOver extends StatelessWidget {
                     'Game Over',
                     style: Theme.of(context)
                         .textTheme
-                        .headlineMedium!
+                        .headlineLarge!
                         .copyWith(color: Colors.red),
                   ),
                   spaceL,
                   Text(
                     'Levels Completed: ${state.level - 1}',
-                    style: Theme.of(context).textTheme.headlineLarge,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   spaceM,
                   Text(
                     'Crash Speed: ${state.crashSpeed.toStringAsFixed(2)} m/s',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   spaceM,
                   ElevatedButton(
