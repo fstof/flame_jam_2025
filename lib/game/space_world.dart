@@ -17,20 +17,19 @@ import 'package:flutter/services.dart';
 
 class SpaceWorld extends Forge2DWorld
     with TapCallbacks, KeyboardHandler, HasGameReference<GravityGame> {
-  final GameCubit cubit;
+  final GameCubit gameCubit;
   Earth? earth;
   late Planet target;
   Planet? start;
   GameState? gameState;
   bool movingCamera = false;
   late final CameraTarget cameraTarget;
-
   StreamSubscription? _ss;
 
-  SpaceWorld(this.cubit) {
+  SpaceWorld(this.gameCubit) {
     add(cameraTarget = CameraTarget());
 
-    _ss = cubit.stream.listen((state) async {
+    _ss = gameCubit.stream.listen((state) async {
       gameState = state;
       if (state is GameOverGameState) {
         game.pauseEngine();
@@ -105,7 +104,7 @@ class SpaceWorld extends Forge2DWorld
 
     add(Launchpad(playerPosition));
 
-    add(Player(playerPosition, this, cubit));
+    add(Player(playerPosition, this, gameCubit));
   }
 
   @override
@@ -122,7 +121,7 @@ class SpaceWorld extends Forge2DWorld
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
           keysPressed.contains(LogicalKeyboardKey.keyA) ||
           keysPressed.contains(LogicalKeyboardKey.keyD)) {
-        cubit.start((gameState! as LevelClearGameState).level + 1);
+        gameCubit.start((gameState! as LevelClearGameState).level + 1);
       }
     }
     return false;

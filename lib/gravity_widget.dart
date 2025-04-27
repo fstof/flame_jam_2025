@@ -2,7 +2,9 @@
 
 import 'package:flame/game.dart';
 import 'package:flame_jam_2025/game/gravity_game.dart';
+import 'package:flame_jam_2025/state/audio_cubit.dart';
 import 'package:flame_jam_2025/state/game_cubit.dart';
+import 'package:flame_jam_2025/storage/storage.dart';
 import 'package:flame_jam_2025/ui/game_over.dart';
 import 'package:flame_jam_2025/ui/hud.dart';
 import 'package:flame_jam_2025/ui/menu.dart';
@@ -20,22 +22,36 @@ class GravityWidget extends StatefulWidget {
 
 class _GravityWidgetState extends State<GravityWidget> {
   late GravityGame game;
-  late GameCubit cubit;
+  late GameCubit gameCubit;
+  late AudioCubit audioCubit;
 
   @override
   void initState() {
     super.initState();
 
-    cubit = GameCubit();
-    game = GravityGame(cubit);
+    gameCubit = GameCubit()..loadGame();
+    audioCubit = AudioCubit(
+      storage: Storage.instance,
+    )..loadState();
+    game = GravityGame(
+      gameCubit: gameCubit,
+      audioCubit: audioCubit,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: cubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<GameCubit>.value(
+          value: gameCubit,
+        ),
+        BlocProvider<AudioCubit>.value(
+          value: audioCubit,
+        ),
+      ],
       child: BlocListener<GameCubit, GameState>(
-        bloc: cubit,
+        bloc: gameCubit,
         listener: (context, state) {
           switch (state) {
             case PlayGameState _:
@@ -74,8 +90,11 @@ class _GravityWidgetState extends State<GravityWidget> {
   void resetGame() {
     setState(() {
       game.reset();
-      game = GravityGame(cubit);
-      cubit.reset();
+      game = GravityGame(
+        gameCubit: gameCubit,
+        audioCubit: audioCubit,
+      );
+      gameCubit.reset();
     });
   }
 }

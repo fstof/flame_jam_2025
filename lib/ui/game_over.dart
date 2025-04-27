@@ -1,5 +1,7 @@
 // ignore_for_file: lines_longer_than_80_chars
 
+import 'package:flame_jam_2025/audio/audio_controller.dart';
+import 'package:flame_jam_2025/audio/sounds.dart';
 import 'package:flame_jam_2025/game/gravity_game.dart';
 import 'package:flame_jam_2025/state/game_cubit.dart';
 import 'package:flame_jam_2025/ui/theme.dart';
@@ -15,58 +17,74 @@ class GameOver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
-      bloc: game.cubit,
+      bloc: game.gameCubit,
       builder: (context, state) {
         if (state is! GameOverGameState) {
           return const Center(
             child: Text('not game over'),
           );
         }
-        return Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Game Over',
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Colors.red),
+        return Stack(
+          children: [
+            Positioned(
+              top: sizeM,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Score: ${state.currentScore}',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  spaceM,
+                  Text(
+                    '|',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  spaceM,
+                  Text(
+                    'High Score: ${state.highScore}',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
               ),
-              spaceM,
-              Text(
-                'Level: ${state.level}',
-                style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Game Over',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium!
+                        .copyWith(color: Colors.red),
+                  ),
+                  spaceL,
+                  Text(
+                    'Levels Completed: ${state.level - 1}',
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                  spaceM,
+                  Text(
+                    'Crash Speed: ${state.crashSpeed.toStringAsFixed(2)} m/s',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  spaceM,
+                  ElevatedButton(
+                    onPressed: () {
+                      AudioController.instance.playSfx(SoundType.click);
+                      resetGame();
+                    },
+                    child: const Text('Restart'),
+                  ),
+                ],
               ),
-              spaceM,
-              Text(
-                'Fuel: ${(state.fuel * 100).toStringAsFixed(0)}%',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              spaceM,
-              Text(
-                'Crash Speed: ${state.crashSpeed.toStringAsFixed(2)} m/s',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              Text(
-                'Time: ${(state.time.inMilliseconds / 1000).toStringAsFixed(1)} seconds',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              spaceM,
-              ElevatedButton(
-                onPressed: resetGame,
-                child: const Text('Restart'),
-              ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
   }
-
-  // void resetGame(BuildContext context) {
-  //   game.reset();
-  //   myGame = MyGame(cubit);
-  //   context.read<GameCubit>().reset();
-  // }
 }

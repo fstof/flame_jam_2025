@@ -2,7 +2,10 @@ import 'dart:math' as math;
 
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Particle;
+import 'package:flame_jam_2025/audio/audio_controller.dart';
+import 'package:flame_jam_2025/audio/sounds.dart';
 import 'package:flame_jam_2025/game/components/environment/earth.dart';
 import 'package:flame_jam_2025/game/components/environment/launchpad.dart';
 import 'package:flame_jam_2025/game/components/environment/planet.dart';
@@ -14,17 +17,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
-  // static final Vector2 size = Vector2(3, 3);
   static final Vector2 size = Vector2(2, 2);
   final Vector2 _position;
   int turning = 0;
-  // int turningStrength = 20;
   int turningStrength = 10;
   bool isBoosting = false;
   double boostStrength = 50;
   bool attached = true;
   double detachedTime = 0;
   final Player _player;
+
+  AudioPlayer? nudge;
+  AudioPlayer? boost;
 
   final Tween<double> noise = Tween(begin: -0.5, end: 0.5);
   final colorTween = ColorTween(begin: Colors.red, end: Colors.yellow);
@@ -74,14 +78,38 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
           keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
           keysPressed.contains(LogicalKeyboardKey.keyW)) {
         isBoosting = true;
+        if (boost?.source != null) {
+          boost!.setReleaseMode(ReleaseMode.release);
+          boost!.play(boost!.source!);
+        } else {
+          AudioController.instance
+              .playSfx(SoundType.podBoost)
+              .then((ap) => boost = ap);
+        }
       }
       if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
           keysPressed.contains(LogicalKeyboardKey.keyA)) {
         turning = -1;
+        if (nudge?.source != null) {
+          nudge!.setReleaseMode(ReleaseMode.loop);
+          nudge!.play(nudge!.source!);
+        } else {
+          AudioController.instance
+              .playSfx(SoundType.podNudge)
+              .then((ap) => nudge = ap);
+        }
       }
       if (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
           keysPressed.contains(LogicalKeyboardKey.keyD)) {
         turning = 1;
+        if (nudge?.source != null) {
+          nudge!.setReleaseMode(ReleaseMode.loop);
+          nudge!.play(nudge!.source!);
+        } else {
+          AudioController.instance
+              .playSfx(SoundType.podNudge)
+              .then((ap) => nudge = ap);
+        }
       }
     }
     if (event is KeyUpEvent) {
@@ -89,14 +117,17 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
           event.logicalKey == LogicalKeyboardKey.arrowUp ||
           event.logicalKey == LogicalKeyboardKey.keyW) {
         isBoosting = false;
+        boost?.stop();
       }
       if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
           event.logicalKey == LogicalKeyboardKey.keyA) {
         turning = 0;
+        nudge?.stop();
       }
       if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
           event.logicalKey == LogicalKeyboardKey.keyD) {
         turning = 0;
+        nudge?.stop();
       }
     }
     return true;

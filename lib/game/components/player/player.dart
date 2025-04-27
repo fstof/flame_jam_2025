@@ -1,13 +1,15 @@
 import 'package:flame/components.dart';
+import 'package:flame_jam_2025/audio/audio_controller.dart';
+import 'package:flame_jam_2025/audio/sounds.dart';
 import 'package:flame_jam_2025/game/components/player/booster.dart';
 import 'package:flame_jam_2025/game/components/player/pod.dart';
 import 'package:flame_jam_2025/game/space_world.dart';
 import 'package:flame_jam_2025/state/game_cubit.dart';
 
 class Player extends Component with KeyboardHandler {
-  Player(this._position, this.world, this.cubit);
+  Player(this._position, this.world, this.gameCubit);
 
-  final GameCubit cubit;
+  final GameCubit gameCubit;
   final Vector2 _position;
   late Booster booster;
   late Pod pod;
@@ -27,30 +29,37 @@ class Player extends Component with KeyboardHandler {
     return super.onLoad();
   }
 
-  double get fuelRemaining =>
-      cubit.state is PlayGameState ? (cubit.state as PlayGameState).fuel : 0;
+  double get fuelRemaining => gameCubit.state is PlayGameState
+      ? (gameCubit.state as PlayGameState).fuel
+      : 0;
 
   void crash() {
-    cubit.crash();
+    AudioController.instance.playSfx(SoundType.crash);
+    gameCubit.crash();
   }
 
   void win() {
-    cubit.win();
+    AudioController.instance.playSfx(SoundType.landing);
+    gameCubit.win();
   }
 
   void start() {
-    cubit.start();
+    gameCubit.start();
   }
 
   void updateSpeed(double speed) {
-    cubit.updateSpeed(speed);
+    gameCubit.updateSpeed(speed);
   }
 
   void boost(double dt, {bool turning = false}) {
     boostTime += dt;
     if (boostTime > 0.1) {
-      cubit.boost(turning: turning);
+      gameCubit.boost(turning: turning);
       boostTime = 0;
     }
+  }
+
+  void boosterLanded() {
+    gameCubit.boosterLanded();
   }
 }

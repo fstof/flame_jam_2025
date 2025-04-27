@@ -2,15 +2,20 @@ import 'dart:math' as math;
 
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Particle;
+import 'package:flame_jam_2025/audio/audio_controller.dart';
+import 'package:flame_jam_2025/audio/sounds.dart';
 import 'package:flame_jam_2025/game/components/environment/earth.dart';
+import 'package:flame_jam_2025/game/components/environment/launchpad.dart';
 import 'package:flame_jam_2025/game/components/player/player.dart';
+import 'package:flame_jam_2025/game/components/player/pod.dart';
 import 'package:flame_jam_2025/game/space_world.dart';
 import 'package:flame_jam_2025/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class Booster extends BodyComponent with KeyboardHandler {
+class Booster extends BodyComponent with KeyboardHandler, ContactCallbacks {
   // static final Vector2 size = Vector2(3, 5);
   static final Vector2 size = Vector2(2, 4);
   final Vector2 _position;
@@ -20,9 +25,13 @@ class Booster extends BodyComponent with KeyboardHandler {
   bool isBoosting = false;
   double boostStrength = 200;
   bool active = true;
+  bool attached = true;
   final Player _player;
   final Tween<double> noise = Tween(begin: -0.5, end: 0.5);
   final colorTween = ColorTween(begin: Colors.red, end: Colors.yellow);
+  AudioPlayer? boost;
+  bool touchingPod = false;
+  bool touchingEarth = false;
 
   Booster(this._position, this._player);
 
@@ -72,6 +81,14 @@ class Booster extends BodyComponent with KeyboardHandler {
           keysPressed.contains(LogicalKeyboardKey.keyW)) {
         isBoosting = true;
         _player.start();
+        if (boost?.source != null) {
+          boost!.setReleaseMode(ReleaseMode.release);
+          boost!.play(boost!.source!);
+        } else {
+          AudioController.instance
+              .playSfx(SoundType.launch)
+              .then((ap) => boost = ap);
+        }
       }
       if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
           keysPressed.contains(LogicalKeyboardKey.keyA)) {
@@ -87,6 +104,7 @@ class Booster extends BodyComponent with KeyboardHandler {
           event.logicalKey == LogicalKeyboardKey.arrowUp ||
           event.logicalKey == LogicalKeyboardKey.keyW) {
         isBoosting = false;
+        boost?.stop();
         detach();
         _player.pod.detach();
       }
@@ -158,9 +176,39 @@ class Booster extends BodyComponent with KeyboardHandler {
     super.update(dt);
   }
 
+  @override
+  void beginContact(Object other, Contact contact) {
+    if (attached) return;
+
+    if (other is Pod) {
+      touchingPod = true;
+    }
+    if (other is Launchpad) {
+      touchingEarth = true;
+
+      _player.boosterLanded();
+      print('BOOSTER LANDED');
+    }
+
+    if (touchingEarth && touchingPod) {
+      _player.crash();
+    }
+  }
+
+  @override
+  void endContact(Object other, Contact contact) {
+    if (other is Pod) {
+      touchingPod = false;
+    }
+    if (other is Launchpad) {
+      touchingEarth = false;
+    }
+  }
+
   void detach() {
     if (!active) return;
     active = false;
+    attached = false;
     world.destroyJoint(body.joints[0]);
   }
 }

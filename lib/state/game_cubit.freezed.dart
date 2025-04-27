@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GameState {
   bool get hardMode;
+  int get highScore;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -30,15 +31,17 @@ mixin _$GameState {
         (other.runtimeType == runtimeType &&
             other is GameState &&
             (identical(other.hardMode, hardMode) ||
-                other.hardMode == hardMode));
+                other.hardMode == hardMode) &&
+            (identical(other.highScore, highScore) ||
+                other.highScore == highScore));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, hardMode);
+  int get hashCode => Object.hash(runtimeType, hardMode, highScore);
 
   @override
   String toString() {
-    return 'GameState(hardMode: $hardMode)';
+    return 'GameState(hardMode: $hardMode, highScore: $highScore)';
   }
 }
 
@@ -47,7 +50,7 @@ abstract mixin class $GameStateCopyWith<$Res> {
   factory $GameStateCopyWith(GameState value, $Res Function(GameState) _then) =
       _$GameStateCopyWithImpl;
   @useResult
-  $Res call({bool hardMode});
+  $Res call({bool hardMode, int highScore});
 }
 
 /// @nodoc
@@ -63,12 +66,17 @@ class _$GameStateCopyWithImpl<$Res> implements $GameStateCopyWith<$Res> {
   @override
   $Res call({
     Object? hardMode = null,
+    Object? highScore = null,
   }) {
     return _then(_self.copyWith(
       hardMode: null == hardMode
           ? _self.hardMode
           : hardMode // ignore: cast_nullable_to_non_nullable
               as bool,
+      highScore: null == highScore
+          ? _self.highScore
+          : highScore // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -76,10 +84,12 @@ class _$GameStateCopyWithImpl<$Res> implements $GameStateCopyWith<$Res> {
 /// @nodoc
 
 class InitialGameState implements GameState {
-  const InitialGameState({required this.hardMode});
+  const InitialGameState({required this.hardMode, required this.highScore});
 
   @override
   final bool hardMode;
+  @override
+  final int highScore;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -95,15 +105,17 @@ class InitialGameState implements GameState {
         (other.runtimeType == runtimeType &&
             other is InitialGameState &&
             (identical(other.hardMode, hardMode) ||
-                other.hardMode == hardMode));
+                other.hardMode == hardMode) &&
+            (identical(other.highScore, highScore) ||
+                other.highScore == highScore));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, hardMode);
+  int get hashCode => Object.hash(runtimeType, hardMode, highScore);
 
   @override
   String toString() {
-    return 'GameState.initial(hardMode: $hardMode)';
+    return 'GameState.initial(hardMode: $hardMode, highScore: $highScore)';
   }
 }
 
@@ -115,7 +127,7 @@ abstract mixin class $InitialGameStateCopyWith<$Res>
       _$InitialGameStateCopyWithImpl;
   @override
   @useResult
-  $Res call({bool hardMode});
+  $Res call({bool hardMode, int highScore});
 }
 
 /// @nodoc
@@ -132,12 +144,17 @@ class _$InitialGameStateCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? hardMode = null,
+    Object? highScore = null,
   }) {
     return _then(InitialGameState(
       hardMode: null == hardMode
           ? _self.hardMode
           : hardMode // ignore: cast_nullable_to_non_nullable
               as bool,
+      highScore: null == highScore
+          ? _self.highScore
+          : highScore // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -150,7 +167,10 @@ class PlayGameState implements GameState {
       required this.hardMode,
       required this.fuel,
       required this.speed,
-      required this.time});
+      required this.time,
+      required this.highScore,
+      required this.currentScore,
+      required this.boosterLanded});
 
   final int level;
   @override
@@ -158,6 +178,10 @@ class PlayGameState implements GameState {
   final double fuel;
   final double speed;
   final Duration time;
+  @override
+  final int highScore;
+  final int currentScore;
+  final bool boosterLanded;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -177,16 +201,22 @@ class PlayGameState implements GameState {
                 other.hardMode == hardMode) &&
             (identical(other.fuel, fuel) || other.fuel == fuel) &&
             (identical(other.speed, speed) || other.speed == speed) &&
-            (identical(other.time, time) || other.time == time));
+            (identical(other.time, time) || other.time == time) &&
+            (identical(other.highScore, highScore) ||
+                other.highScore == highScore) &&
+            (identical(other.currentScore, currentScore) ||
+                other.currentScore == currentScore) &&
+            (identical(other.boosterLanded, boosterLanded) ||
+                other.boosterLanded == boosterLanded));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, level, hardMode, fuel, speed, time);
+  int get hashCode => Object.hash(runtimeType, level, hardMode, fuel, speed,
+      time, highScore, currentScore, boosterLanded);
 
   @override
   String toString() {
-    return 'GameState.play(level: $level, hardMode: $hardMode, fuel: $fuel, speed: $speed, time: $time)';
+    return 'GameState.play(level: $level, hardMode: $hardMode, fuel: $fuel, speed: $speed, time: $time, highScore: $highScore, currentScore: $currentScore, boosterLanded: $boosterLanded)';
   }
 }
 
@@ -199,7 +229,14 @@ abstract mixin class $PlayGameStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int level, bool hardMode, double fuel, double speed, Duration time});
+      {int level,
+      bool hardMode,
+      double fuel,
+      double speed,
+      Duration time,
+      int highScore,
+      int currentScore,
+      bool boosterLanded});
 }
 
 /// @nodoc
@@ -220,6 +257,9 @@ class _$PlayGameStateCopyWithImpl<$Res>
     Object? fuel = null,
     Object? speed = null,
     Object? time = null,
+    Object? highScore = null,
+    Object? currentScore = null,
+    Object? boosterLanded = null,
   }) {
     return _then(PlayGameState(
       level: null == level
@@ -242,6 +282,18 @@ class _$PlayGameStateCopyWithImpl<$Res>
           ? _self.time
           : time // ignore: cast_nullable_to_non_nullable
               as Duration,
+      highScore: null == highScore
+          ? _self.highScore
+          : highScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      currentScore: null == currentScore
+          ? _self.currentScore
+          : currentScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      boosterLanded: null == boosterLanded
+          ? _self.boosterLanded
+          : boosterLanded // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -254,7 +306,10 @@ class GameOverGameState implements GameState {
       required this.hardMode,
       required this.fuel,
       required this.crashSpeed,
-      required this.time});
+      required this.time,
+      required this.highScore,
+      required this.currentScore,
+      required this.boosterLanded});
 
   final int level;
   @override
@@ -262,6 +317,10 @@ class GameOverGameState implements GameState {
   final double fuel;
   final double crashSpeed;
   final Duration time;
+  @override
+  final int highScore;
+  final int currentScore;
+  final bool boosterLanded;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -282,16 +341,22 @@ class GameOverGameState implements GameState {
             (identical(other.fuel, fuel) || other.fuel == fuel) &&
             (identical(other.crashSpeed, crashSpeed) ||
                 other.crashSpeed == crashSpeed) &&
-            (identical(other.time, time) || other.time == time));
+            (identical(other.time, time) || other.time == time) &&
+            (identical(other.highScore, highScore) ||
+                other.highScore == highScore) &&
+            (identical(other.currentScore, currentScore) ||
+                other.currentScore == currentScore) &&
+            (identical(other.boosterLanded, boosterLanded) ||
+                other.boosterLanded == boosterLanded));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, level, hardMode, fuel, crashSpeed, time);
+  int get hashCode => Object.hash(runtimeType, level, hardMode, fuel,
+      crashSpeed, time, highScore, currentScore, boosterLanded);
 
   @override
   String toString() {
-    return 'GameState.gameOver(level: $level, hardMode: $hardMode, fuel: $fuel, crashSpeed: $crashSpeed, time: $time)';
+    return 'GameState.gameOver(level: $level, hardMode: $hardMode, fuel: $fuel, crashSpeed: $crashSpeed, time: $time, highScore: $highScore, currentScore: $currentScore, boosterLanded: $boosterLanded)';
   }
 }
 
@@ -308,7 +373,10 @@ abstract mixin class $GameOverGameStateCopyWith<$Res>
       bool hardMode,
       double fuel,
       double crashSpeed,
-      Duration time});
+      Duration time,
+      int highScore,
+      int currentScore,
+      bool boosterLanded});
 }
 
 /// @nodoc
@@ -329,6 +397,9 @@ class _$GameOverGameStateCopyWithImpl<$Res>
     Object? fuel = null,
     Object? crashSpeed = null,
     Object? time = null,
+    Object? highScore = null,
+    Object? currentScore = null,
+    Object? boosterLanded = null,
   }) {
     return _then(GameOverGameState(
       level: null == level
@@ -351,6 +422,18 @@ class _$GameOverGameStateCopyWithImpl<$Res>
           ? _self.time
           : time // ignore: cast_nullable_to_non_nullable
               as Duration,
+      highScore: null == highScore
+          ? _self.highScore
+          : highScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      currentScore: null == currentScore
+          ? _self.currentScore
+          : currentScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      boosterLanded: null == boosterLanded
+          ? _self.boosterLanded
+          : boosterLanded // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -362,13 +445,20 @@ class LevelClearGameState implements GameState {
       {required this.level,
       required this.hardMode,
       required this.fuel,
-      required this.time});
+      required this.time,
+      required this.highScore,
+      required this.currentScore,
+      required this.boosterLanded});
 
   final int level;
   @override
   final bool hardMode;
   final double fuel;
   final Duration time;
+  @override
+  final int highScore;
+  final int currentScore;
+  final bool boosterLanded;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -387,15 +477,22 @@ class LevelClearGameState implements GameState {
             (identical(other.hardMode, hardMode) ||
                 other.hardMode == hardMode) &&
             (identical(other.fuel, fuel) || other.fuel == fuel) &&
-            (identical(other.time, time) || other.time == time));
+            (identical(other.time, time) || other.time == time) &&
+            (identical(other.highScore, highScore) ||
+                other.highScore == highScore) &&
+            (identical(other.currentScore, currentScore) ||
+                other.currentScore == currentScore) &&
+            (identical(other.boosterLanded, boosterLanded) ||
+                other.boosterLanded == boosterLanded));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, level, hardMode, fuel, time);
+  int get hashCode => Object.hash(runtimeType, level, hardMode, fuel, time,
+      highScore, currentScore, boosterLanded);
 
   @override
   String toString() {
-    return 'GameState.levelClear(level: $level, hardMode: $hardMode, fuel: $fuel, time: $time)';
+    return 'GameState.levelClear(level: $level, hardMode: $hardMode, fuel: $fuel, time: $time, highScore: $highScore, currentScore: $currentScore, boosterLanded: $boosterLanded)';
   }
 }
 
@@ -407,7 +504,14 @@ abstract mixin class $LevelClearGameStateCopyWith<$Res>
       _$LevelClearGameStateCopyWithImpl;
   @override
   @useResult
-  $Res call({int level, bool hardMode, double fuel, Duration time});
+  $Res call(
+      {int level,
+      bool hardMode,
+      double fuel,
+      Duration time,
+      int highScore,
+      int currentScore,
+      bool boosterLanded});
 }
 
 /// @nodoc
@@ -427,6 +531,9 @@ class _$LevelClearGameStateCopyWithImpl<$Res>
     Object? hardMode = null,
     Object? fuel = null,
     Object? time = null,
+    Object? highScore = null,
+    Object? currentScore = null,
+    Object? boosterLanded = null,
   }) {
     return _then(LevelClearGameState(
       level: null == level
@@ -445,6 +552,18 @@ class _$LevelClearGameStateCopyWithImpl<$Res>
           ? _self.time
           : time // ignore: cast_nullable_to_non_nullable
               as Duration,
+      highScore: null == highScore
+          ? _self.highScore
+          : highScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      currentScore: null == currentScore
+          ? _self.currentScore
+          : currentScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      boosterLanded: null == boosterLanded
+          ? _self.boosterLanded
+          : boosterLanded // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }

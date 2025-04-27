@@ -14,7 +14,7 @@ class Hud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
-      bloc: game.cubit,
+      bloc: game.gameCubit,
       builder: (context, state) {
         if (state is! PlayGameState) return const Offstage();
 
@@ -23,10 +23,34 @@ class Hud extends StatelessWidget {
             children: [
               Positioned(
                 top: sizeM,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Score: ${state.currentScore}',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    spaceM,
+                    Text(
+                      '|',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    spaceM,
+                    Text(
+                      'High Score: ${state.highScore}',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: sizeM,
                 right: sizeM,
                 child: Text(
                   'Speed: ${state.speed.toStringAsFixed(2)} m/s',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
               Positioned(
@@ -37,11 +61,11 @@ class Hud extends StatelessWidget {
                   children: [
                     Text(
                       'Fuel: ${(state.fuel * 100).toStringAsFixed(0)}%',
-                      style: Theme.of(context).textTheme.headlineMedium,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
                       'Time: ${(state.time.inMilliseconds / 1000).toStringAsFixed(1)}',
-                      style: Theme.of(context).textTheme.headlineMedium,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],
                 ),
