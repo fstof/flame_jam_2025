@@ -71,7 +71,11 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (attached) return true;
+    if (attached || game.paused) {
+      boost?.stop();
+      nudge?.stop();
+      return true;
+    }
 
     if (event is KeyDownEvent) {
       if (keysPressed.contains(LogicalKeyboardKey.space) ||

@@ -73,7 +73,10 @@ class Booster extends BodyComponent with KeyboardHandler, ContactCallbacks {
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (!active) return true;
+    if (!active || game.paused) {
+      boost?.stop();
+      return true;
+    }
 
     if (event is KeyDownEvent) {
       if (keysPressed.contains(LogicalKeyboardKey.space) ||

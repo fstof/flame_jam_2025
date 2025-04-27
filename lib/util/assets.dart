@@ -11,7 +11,7 @@ const imgP7 = 'P7.png';
 const imgP8 = 'P8.png';
 const imgPod = 'Pod.png';
 
-const bgmPath = 'music/bg_music.ogg';
+const bgmPath = 'music/bg_music.mp3';
 const sfxLaunch = 'sfx/high_boost_start.mp3';
 const sfxPodBoost = 'sfx/boost_start.mp3';
 const sfxPodNudge = 'sfx/high_boost.mp3';
