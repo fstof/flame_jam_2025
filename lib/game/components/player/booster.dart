@@ -110,6 +110,7 @@ class Booster extends BodyComponent with KeyboardHandler, ContactCallbacks {
         boost?.stop();
         detach();
         _player.pod.detach();
+        body.applyLinearImpulse(Vector2(0, 10));
       }
       if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
           event.logicalKey == LogicalKeyboardKey.keyA) {

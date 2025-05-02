@@ -252,5 +252,6 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
 
   void detach() {
     attached = false;
+    body.applyLinearImpulse(Vector2(0, -10));
   }
 }
