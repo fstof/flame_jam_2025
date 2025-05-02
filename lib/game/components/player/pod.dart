@@ -202,12 +202,12 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
     if (other == target) {
       if (speed > kLethalSpeed) {
         // _player.win();
-        _player.crash();
+        _player.crash(win: true);
       } else {
         _player.win();
       }
     } else if (other is Earth || other is Launchpad) {
-      _player.crash();
+      _player.crash(die: true);
     } else if (other is Booster && detachedTime > 0.5) {
       _player.crash();
     }
@@ -246,7 +246,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
         position.x > game.camera.visibleWorldRect.right + 5 ||
         position.y < game.camera.visibleWorldRect.top - 5 ||
         position.y > game.camera.visibleWorldRect.bottom + 5) {
-      _player.crash();
+      _player.crash(die: true);
     }
   }
 

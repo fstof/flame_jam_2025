@@ -15,6 +15,7 @@ sealed class GameState with _$GameState {
     required int highScore,
     required int currentScore,
     required bool boosterLanded,
+    required double health,
   }) = PlayGameState;
   const factory GameState.gameOver({
     required int level,
@@ -34,5 +35,6 @@ sealed class GameState with _$GameState {
     required int highScore,
     required int currentScore,
     required bool boosterLanded,
+    required double health,
   }) = LevelClearGameState;
 }

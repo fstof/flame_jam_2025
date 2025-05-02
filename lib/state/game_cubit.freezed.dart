@@ -170,7 +170,8 @@ class PlayGameState implements GameState {
       required this.time,
       required this.highScore,
       required this.currentScore,
-      required this.boosterLanded});
+      required this.boosterLanded,
+      required this.health});
 
   final int level;
   @override
@@ -182,6 +183,7 @@ class PlayGameState implements GameState {
   final int highScore;
   final int currentScore;
   final bool boosterLanded;
+  final double health;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -207,16 +209,17 @@ class PlayGameState implements GameState {
             (identical(other.currentScore, currentScore) ||
                 other.currentScore == currentScore) &&
             (identical(other.boosterLanded, boosterLanded) ||
-                other.boosterLanded == boosterLanded));
+                other.boosterLanded == boosterLanded) &&
+            (identical(other.health, health) || other.health == health));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, level, hardMode, fuel, speed,
-      time, highScore, currentScore, boosterLanded);
+      time, highScore, currentScore, boosterLanded, health);
 
   @override
   String toString() {
-    return 'GameState.play(level: $level, hardMode: $hardMode, fuel: $fuel, speed: $speed, time: $time, highScore: $highScore, currentScore: $currentScore, boosterLanded: $boosterLanded)';
+    return 'GameState.play(level: $level, hardMode: $hardMode, fuel: $fuel, speed: $speed, time: $time, highScore: $highScore, currentScore: $currentScore, boosterLanded: $boosterLanded, health: $health)';
   }
 }
 
@@ -236,7 +239,8 @@ abstract mixin class $PlayGameStateCopyWith<$Res>
       Duration time,
       int highScore,
       int currentScore,
-      bool boosterLanded});
+      bool boosterLanded,
+      double health});
 }
 
 /// @nodoc
@@ -260,6 +264,7 @@ class _$PlayGameStateCopyWithImpl<$Res>
     Object? highScore = null,
     Object? currentScore = null,
     Object? boosterLanded = null,
+    Object? health = null,
   }) {
     return _then(PlayGameState(
       level: null == level
@@ -294,6 +299,10 @@ class _$PlayGameStateCopyWithImpl<$Res>
           ? _self.boosterLanded
           : boosterLanded // ignore: cast_nullable_to_non_nullable
               as bool,
+      health: null == health
+          ? _self.health
+          : health // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
@@ -448,7 +457,8 @@ class LevelClearGameState implements GameState {
       required this.time,
       required this.highScore,
       required this.currentScore,
-      required this.boosterLanded});
+      required this.boosterLanded,
+      required this.health});
 
   final int level;
   @override
@@ -459,6 +469,7 @@ class LevelClearGameState implements GameState {
   final int highScore;
   final int currentScore;
   final bool boosterLanded;
+  final double health;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -483,16 +494,17 @@ class LevelClearGameState implements GameState {
             (identical(other.currentScore, currentScore) ||
                 other.currentScore == currentScore) &&
             (identical(other.boosterLanded, boosterLanded) ||
-                other.boosterLanded == boosterLanded));
+                other.boosterLanded == boosterLanded) &&
+            (identical(other.health, health) || other.health == health));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, level, hardMode, fuel, time,
-      highScore, currentScore, boosterLanded);
+      highScore, currentScore, boosterLanded, health);
 
   @override
   String toString() {
-    return 'GameState.levelClear(level: $level, hardMode: $hardMode, fuel: $fuel, time: $time, highScore: $highScore, currentScore: $currentScore, boosterLanded: $boosterLanded)';
+    return 'GameState.levelClear(level: $level, hardMode: $hardMode, fuel: $fuel, time: $time, highScore: $highScore, currentScore: $currentScore, boosterLanded: $boosterLanded, health: $health)';
   }
 }
 
@@ -511,7 +523,8 @@ abstract mixin class $LevelClearGameStateCopyWith<$Res>
       Duration time,
       int highScore,
       int currentScore,
-      bool boosterLanded});
+      bool boosterLanded,
+      double health});
 }
 
 /// @nodoc
@@ -534,6 +547,7 @@ class _$LevelClearGameStateCopyWithImpl<$Res>
     Object? highScore = null,
     Object? currentScore = null,
     Object? boosterLanded = null,
+    Object? health = null,
   }) {
     return _then(LevelClearGameState(
       level: null == level
@@ -564,6 +578,10 @@ class _$LevelClearGameStateCopyWithImpl<$Res>
           ? _self.boosterLanded
           : boosterLanded // ignore: cast_nullable_to_non_nullable
               as bool,
+      health: null == health
+          ? _self.health
+          : health // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }

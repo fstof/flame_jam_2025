@@ -16,7 +16,27 @@ class Hud extends StatelessWidget {
     return BlocBuilder<GameCubit, GameState>(
       bloc: game.gameCubit,
       builder: (context, state) {
-        if (state is! PlayGameState) return const Offstage();
+        var score = 0;
+        var health = 0.0;
+        var speed = 0.0;
+        var fuel = 0.0;
+        var time = Duration.zero;
+
+        if (state is PlayGameState) {
+          score = state.currentScore;
+          health = state.health;
+          speed = state.speed;
+          fuel = state.fuel;
+          time = state.time;
+        } else if (state is LevelClearGameState) {
+          score = state.currentScore;
+          health = state.health;
+          speed = 0;
+          fuel = state.fuel;
+          time = state.time;
+        } else {
+          return const Offstage();
+        }
 
         return Center(
           child: Stack(
@@ -29,7 +49,7 @@ class Hud extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Score: ${state.currentScore}',
+                      'Score: $score',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     spaceM,
@@ -46,10 +66,38 @@ class Hud extends StatelessWidget {
                 ),
               ),
               Positioned(
+                top: sizeM * 3,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '❤️',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    spaceS,
+                    SizedBox(
+                      width: 100,
+                      height: 10,
+                      child: LinearProgressIndicator(
+                        color: health > 0.5
+                            ? Colors.green
+                            : health < 0.2
+                                ? Colors.red
+                                : Colors.orange,
+                        value: health,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
                 top: sizeM,
                 right: sizeM,
                 child: Text(
-                  'Speed: ${state.speed.toStringAsFixed(2)} m/s',
+                  'Speed: ${speed.toStringAsFixed(2)} m/s',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
@@ -60,11 +108,11 @@ class Hud extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Fuel: ${(state.fuel * 100).toStringAsFixed(0)}%',
+                      'Fuel: ${(fuel * 100).toStringAsFixed(0)}%',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
-                      'Time: ${(state.time.inMilliseconds / 1000).toStringAsFixed(1)}',
+                      'Time: ${(time.inMilliseconds / 1000).toStringAsFixed(1)}',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],

@@ -62,6 +62,7 @@ class _GravityWidgetState extends State<GravityWidget> {
               game.overlays.add('game_over');
             case LevelClearGameState _:
               game.overlays.clear();
+              game.overlays.add('hud');
             case InitialGameState _:
           }
         },
