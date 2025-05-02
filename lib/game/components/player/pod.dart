@@ -20,7 +20,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
   static final Vector2 size = Vector2(2, 2);
   final Vector2 _position;
   int turning = 0;
-  int turningStrength = 10;
+  int turningStrength = 20;
   bool isBoosting = false;
   double boostStrength = 50;
   bool attached = true;
@@ -61,7 +61,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
       type: BodyType.dynamic,
       userData: this,
       position: _position,
-      angularDamping: 1,
+      angularDamping: 5,
     );
     final body = world.createBody(bodyDef);
     body.createFixture(fixtureDef);
