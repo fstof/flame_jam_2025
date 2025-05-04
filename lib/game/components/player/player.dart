@@ -33,9 +33,9 @@ class Player extends Component with KeyboardHandler {
       ? (gameCubit.state as PlayGameState).fuel
       : 0;
 
-  void crash() {
+  void crash({bool die = false, bool win = false}) {
     AudioController.instance.playSfx(SoundType.crash);
-    gameCubit.crash();
+    gameCubit.crash(die, win);
   }
 
   void win() {

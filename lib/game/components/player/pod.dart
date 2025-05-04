@@ -20,7 +20,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
   static final Vector2 size = Vector2(2, 2);
   final Vector2 _position;
   int turning = 0;
-  int turningStrength = 10;
+  int turningStrength = 20;
   bool isBoosting = false;
   double boostStrength = 50;
   bool attached = true;
@@ -61,7 +61,7 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
       type: BodyType.dynamic,
       userData: this,
       position: _position,
-      angularDamping: 1,
+      angularDamping: 5,
     );
     final body = world.createBody(bodyDef);
     body.createFixture(fixtureDef);
@@ -202,12 +202,12 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
     if (other == target) {
       if (speed > kLethalSpeed) {
         // _player.win();
-        _player.crash();
+        _player.crash(win: true);
       } else {
         _player.win();
       }
     } else if (other is Earth || other is Launchpad) {
-      _player.crash();
+      _player.crash(die: true);
     } else if (other is Booster && detachedTime > 0.5) {
       _player.crash();
     }
@@ -246,11 +246,12 @@ class Pod extends BodyComponent with KeyboardHandler, ContactCallbacks {
         position.x > game.camera.visibleWorldRect.right + 5 ||
         position.y < game.camera.visibleWorldRect.top - 5 ||
         position.y > game.camera.visibleWorldRect.bottom + 5) {
-      _player.crash();
+      _player.crash(die: true);
     }
   }
 
   void detach() {
     attached = false;
+    body.applyLinearImpulse(Vector2(0, -10));
   }
 }

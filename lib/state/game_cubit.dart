@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:bloc/bloc.dart';
 import 'package:flame_jam_2025/storage/storage.dart';
+import 'package:flame_jam_2025/util/util.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'game_cubit.freezed.dart';
@@ -50,36 +51,68 @@ class GameCubit extends Cubit<GameState> {
     return finalScore;
   }
 
-  void crash() {
+  void crash([bool die = false, bool andWin = false]) {
     stopwatch.stop();
     final currentState = state;
     if (currentState is! PlayGameState) return;
 
-    final score = _calculateScore(
-      currentLevel: currentState.level,
-      hardMode: state.hardMode,
-      time: stopwatch.elapsed,
-      boosterLanded: currentState.boosterLanded,
-    );
+    var newHealth = currentState.health;
 
-    var highScore = storage.getScore();
-    if (score > highScore) {
-      highScore = score;
-      storage.saveScore(score);
+    if (currentState.speed > kLethalSpeed) {
+      newHealth = newHealth - 0.1;
     }
+    if (currentState.speed > kLethalSpeed + 1) {
+      newHealth = newHealth - 0.1;
+    }
+    if (currentState.speed > kLethalSpeed + 2) {
+      newHealth = newHealth - 0.1;
+    }
+    if (currentState.speed > kLethalSpeed + 3) {
+      newHealth = newHealth - 0.2;
+    }
+    if (die) newHealth = 0;
+    // if (currentState.speed > 7) {
+    //   newHealth = currentState.health - 0.5;
+    // } else if (currentState.speed > 6) {
+    //   newHealth = currentState.health - 0.4;
+    // } else if (currentState.speed > 5) {
+    //   newHealth = currentState.health - 0.3;
+    // }
 
-    emit(
-      GameState.gameOver(
-        level: currentState.level,
+    if (newHealth <= 0.001) {
+      final score = _calculateScore(
+        currentLevel: currentState.level,
         hardMode: state.hardMode,
-        fuel: currentState.fuel,
         time: stopwatch.elapsed,
-        crashSpeed: currentState.speed,
-        highScore: highScore,
-        currentScore: score,
         boosterLanded: currentState.boosterLanded,
-      ),
-    );
+      );
+
+      var highScore = storage.getScore();
+      if (score > highScore) {
+        highScore = score;
+        storage.saveScore(score);
+      }
+
+      emit(
+        GameState.gameOver(
+          level: currentState.level,
+          hardMode: state.hardMode,
+          fuel: currentState.fuel,
+          time: stopwatch.elapsed,
+          crashSpeed: currentState.speed,
+          highScore: highScore,
+          currentScore: score,
+          boosterLanded: currentState.boosterLanded,
+        ),
+      );
+    } else {
+      emit(
+        currentState.copyWith(
+          health: newHealth,
+        ),
+      );
+    }
+    if (andWin) win();
   }
 
   void win() {
@@ -104,6 +137,7 @@ class GameCubit extends Cubit<GameState> {
         highScore: highScore,
         currentScore: score,
         boosterLanded: currentState.boosterLanded,
+        health: currentState.health,
       ),
     );
   }
@@ -124,8 +158,10 @@ class GameCubit extends Cubit<GameState> {
 
   void start([int level = 1]) {
     var fuel = 1.0;
+    var health = 1.0;
     if (state is LevelClearGameState) {
       fuel = (state as LevelClearGameState).fuel;
+      health = (state as LevelClearGameState).health;
     }
     var boosterLanded = false;
     if (state is LevelClearGameState) {
@@ -142,6 +178,7 @@ class GameCubit extends Cubit<GameState> {
         highScore: state.highScore,
         currentScore: 0,
         boosterLanded: boosterLanded,
+        health: health,
       ),
     );
     timer = Timer.periodic(const Duration(milliseconds: 100), (t) {
